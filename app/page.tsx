@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import { FaHeart } from "react-icons/fa";
 import Letter from "@/components/Letter";
 import MusicPlayer from "@/components/MusicPlayer";
+import Goodbye from "@/components/Goodbye";
 import { useEffect } from "react";
 
 export default function Home() {
@@ -127,7 +128,6 @@ export default function Home() {
           variants={itemVariants}
           className="text-2xl text-rose-600 font-light relative z-10"
         >
-          Sending you all the love today
         </motion.p>
       </motion.div>
 
@@ -149,6 +149,7 @@ export default function Home() {
 
     <Letter />
     <MusicPlayer />
+    <Goodbye />
     </>
   );
 }

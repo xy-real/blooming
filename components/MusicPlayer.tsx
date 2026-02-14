@@ -11,13 +11,23 @@ export default function MusicPlayer() {
   const [duration, setDuration] = useState(0);
   const [volume, setVolume] = useState(0.5);
   const [showVolume, setShowVolume] = useState(false);
+  
+  // NEW: Track if user is currently dragging the slider
+  const [isDragging, setIsDragging] = useState(false);
+  
   const audioRef = useRef<HTMLAudioElement>(null);
 
   useEffect(() => {
     const audio = audioRef.current;
     if (!audio) return;
 
-    const handleTimeUpdate = () => setCurrentTime(audio.currentTime);
+    const handleTimeUpdate = () => {
+      // ONLY update state if the user is NOT dragging
+      if (!isDragging) {
+        setCurrentTime(audio.currentTime);
+      }
+    };
+
     const handleLoadedMetadata = () => {
       setDuration(audio.duration);
       audio.volume = 0.5;
@@ -30,7 +40,7 @@ export default function MusicPlayer() {
       audio.removeEventListener('timeupdate', handleTimeUpdate);
       audio.removeEventListener('loadedmetadata', handleLoadedMetadata);
     };
-  }, []);
+  }, [isDragging]); // Add isDragging to dependencies
 
   const togglePlay = () => {
     if (audioRef.current) {
@@ -43,12 +53,23 @@ export default function MusicPlayer() {
     }
   };
 
+  // 1. When user starts dragging
+  const handleSeekStart = () => {
+    setIsDragging(true);
+  };
+
+  // 2. While user is dragging (updates visual slider only)
   const handleSeek = (e: React.ChangeEvent<HTMLInputElement>) => {
     const time = parseFloat(e.target.value);
     setCurrentTime(time);
+  };
+
+  // 3. When user releases (updates actual audio)
+  const handleSeekEnd = () => {
     if (audioRef.current) {
-      audioRef.current.currentTime = time;
+      audioRef.current.currentTime = currentTime;
     }
+    setIsDragging(false);
   };
 
   const handleVolumeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -98,7 +119,6 @@ export default function MusicPlayer() {
         </h2>
 
         <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-2xl p-8 border border-pink-200">
-          {/* Album Art */}
           <div className="w-full aspect-square rounded-lg mb-6 overflow-hidden relative">
             <Image 
               src="/pasilyo.jpg" 
@@ -108,7 +128,6 @@ export default function MusicPlayer() {
             />
           </div>
 
-          {/* Song Info */}
           <div className="text-center mb-6">
             <h3 className="text-2xl font-semibold text-gray-800 mb-2">
               Pasilyo
@@ -118,28 +137,28 @@ export default function MusicPlayer() {
             </p>
           </div>
 
-          {/* Progress Bar */}
+          {/* UPDATED PROGRESS BAR */}
           <div className="mb-4">
             <input
               type="range"
               min="0"
-              max={duration || 0}
+              max={duration || 100} // prevent max=0 if loading
               value={currentTime}
-              onChange={handleSeek}
-              className="w-full h-2 bg-pink-200 rounded-lg appearance-none cursor-pointer slider"
-              style={{
-                background: `linear-gradient(to right, #f43f5e 0%, #f43f5e ${(currentTime / duration) * 100}%, #fbcfe8 ${(currentTime / duration) * 100}%, #fbcfe8 100%)`
-              }}
+              onMouseDown={handleSeekStart} // Start Drag
+              onTouchStart={handleSeekStart} // Start Drag (Mobile)
+              onChange={handleSeek}         // Visual Update
+              onMouseUp={handleSeekEnd}     // Commit Change
+              onTouchEnd={handleSeekEnd}    // Commit Change (Mobile)
+              className="w-full h-2 bg-pink-200 rounded-lg cursor-pointer accent-rose-500"
             />
+            
             <div className="flex justify-between text-sm text-gray-500 mt-2">
               <span>{formatTime(currentTime)}</span>
               <span>{formatTime(duration)}</span>
             </div>
           </div>
 
-          {/* Play Button & Volume Control */}
           <div className="flex justify-center items-center gap-6 mb-6">
-            {/* Volume Control */}
             <div className="relative">
               <motion.button
                 onClick={() => setShowVolume(!showVolume)}
@@ -163,6 +182,7 @@ export default function MusicPlayer() {
                         {Math.round(volume * 100)}%
                       </span>
                       <div className="h-32 flex items-center justify-center">
+                        {/* Updated Volume Slider as well */}
                         <input
                           type="range"
                           min="0"
@@ -170,11 +190,7 @@ export default function MusicPlayer() {
                           step="0.01"
                           value={volume}
                           onChange={handleVolumeChange}
-                          className="w-32 h-2 appearance-none bg-pink-200 rounded-lg cursor-pointer -rotate-90 origin-center"
-                          style={{
-                            WebkitAppearance: "none",
-                            background: `linear-gradient(to right, #f43f5e 0%, #f43f5e ${volume * 100}%, #fbcfe8 ${volume * 100}%, #fbcfe8 100%)`
-                          }}
+                          className="w-32 h-2 bg-pink-200 rounded-lg cursor-pointer accent-rose-500 -rotate-90 origin-center"
                         />
                       </div>
                     </div>
@@ -183,7 +199,6 @@ export default function MusicPlayer() {
               </AnimatePresence>
             </div>
 
-            {/* Play Button */}
             <motion.button
               onClick={togglePlay}
               className="w-16 h-16 rounded-full bg-rose-500 text-white flex items-center justify-center shadow-lg hover:bg-rose-600 transition-colors"
@@ -193,7 +208,6 @@ export default function MusicPlayer() {
               {isPlaying ? <FaPause size={24} /> : <FaPlay size={24} className="ml-1" />}
             </motion.button>
 
-            {/* Restart Button */}
             <motion.button
               onClick={handleRestart}
               className="w-12 h-12 rounded-full bg-rose-100 text-rose-500 flex items-center justify-center hover:bg-rose-200 transition-colors"
@@ -204,7 +218,6 @@ export default function MusicPlayer() {
             </motion.button>
           </div>
 
-          {/* Hidden Audio Element */}
           <audio
             ref={audioRef}
             src="/pasilyo.mp3"
