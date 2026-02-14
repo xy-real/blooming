@@ -21,12 +21,15 @@ body {
 
 html {
   background: #fdf2f8 !important;
+  scroll-behavior: smooth;
 }
 
 /* Custom slider styles */
 input[type="range"] {
   -webkit-appearance: none;
   appearance: none;
+  background: transparent;
+  height: 16px;
 }
 
 input[type="range"]::-webkit-slider-thumb {
@@ -37,6 +40,7 @@ input[type="range"]::-webkit-slider-thumb {
   border-radius: 50%;
   background: #f43f5e;
   cursor: pointer;
+  margin-top: -4px;
 }
 
 input[type="range"]::-moz-range-thumb {
@@ -51,9 +55,13 @@ input[type="range"]::-moz-range-thumb {
 input[type="range"]::-webkit-slider-runnable-track {
   height: 8px;
   border-radius: 4px;
+  background: #fecdd3;
+  border: none;
 }
 
 input[type="range"]::-moz-range-track {
   height: 8px;
   border-radius: 4px;
+  background: #fecdd3;
+  border: none;
 }
