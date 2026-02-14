@@ -20,14 +20,7 @@ export default function MusicPlayer() {
     const handleTimeUpdate = () => setCurrentTime(audio.currentTime);
     const handleLoadedMetadata = () => {
       setDuration(audio.duration);
-      // Set initial volume and start playing at 3 seconds
       audio.volume = 0.5;
-      audio.currentTime = 3;
-      audio.play().then(() => {
-        setIsPlaying(true);
-      }).catch((error) => {
-        console.log("Autoplay prevented:", error);
-      });
     };
     
     audio.addEventListener('timeupdate', handleTimeUpdate);
