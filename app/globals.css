@@ -5,6 +5,7 @@
   --foreground: #171717 !important;
 }
 
+/* eslint-disable-next-line */
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);

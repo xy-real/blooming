@@ -3,8 +3,15 @@
 import { motion } from "framer-motion";
 import { FaHeart } from "react-icons/fa";
 import Letter from "@/components/Letter";
+import MusicPlayer from "@/components/MusicPlayer";
+import { useEffect } from "react";
 
 export default function Home() {
+  // Scroll to top on page load/refresh
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: {
@@ -141,6 +148,7 @@ export default function Home() {
     </div>
 
     <Letter />
+    <MusicPlayer />
     </>
   );
 }
