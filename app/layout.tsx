@@ -15,6 +15,9 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "BLOOMING",
   description: "A confession",
+  icons: {
+    icon: '/flower_3025706.png',
+  },
 };
 
 export default function RootLayout({
