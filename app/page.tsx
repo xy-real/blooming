@@ -2,6 +2,7 @@
 
 import { motion } from "framer-motion";
 import { FaHeart } from "react-icons/fa";
+import Letter from "@/components/Letter";
 
 export default function Home() {
   const containerVariants = {
@@ -46,8 +47,9 @@ export default function Home() {
   ];
 
   return (
-    <div className="min-h-screen bg-linear-to-br from-pink-100 via-red-50 to-rose-100 flex items-center justify-center p-4 overflow-hidden">
-      <motion.div
+    <>
+      <div className="min-h-screen flex items-center justify-center p-4 overflow-hidden relative">
+        <motion.div
         className="text-center space-y-12 max-w-2xl relative"
         variants={containerVariants}
         initial="hidden"
@@ -120,35 +122,25 @@ export default function Home() {
         >
           Sending you all the love today
         </motion.p>
-
-        <motion.div
-          variants={itemVariants}
-          className="flex justify-center gap-4 text-5xl relative z-10"
-        >
-          {[...Array(5)].map((_, i) => (
-            <motion.div
-              key={i}
-              className="text-red-500 cursor-pointer"
-              whileHover={{
-                scale: 1.4,
-                rotate: 15 * (i % 2 === 0 ? 1 : -1),
-                transition: { type: "spring", stiffness: 300 },
-              }}
-              whileTap={{ scale: 0.9 }}
-              animate={{
-                rotate: [0, 5, -5, 0],
-              }}
-              transition={{
-                duration: 2,
-                repeat: Infinity,
-                delay: i * 0.2,
-              }}
-            >
-              <FaHeart />
-            </motion.div>
-          ))}
-        </motion.div>
       </motion.div>
+
+      {/* Scroll indicator */}
+      <motion.a
+        href="#letter"
+        className="absolute bottom-8 left-1/2 -translate-x-1/2 text-rose-500 cursor-pointer z-20"
+        animate={{ y: [0, 10, 0] }}
+        transition={{ duration: 1.5, repeat: Infinity }}
+      >
+        <div className="flex flex-col items-center gap-2">
+          <span className="text-sm">Read more</span>
+          <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+          </svg>
+        </div>
+      </motion.a>
     </div>
+
+    <Letter />
+    </>
   );
 }
